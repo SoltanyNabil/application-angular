@@ -1,0 +1,84 @@
+<div class="container">
+    <br>
+    <h2 style="color: #fff;" class="text-center">CMS</h2>
+
+    <hr>
+    <p-toolbar>
+        <div class="p-toolbar-group-left">
+            <h3>Posts Administration</h3>
+        </div>
+
+        <div class="p-toolbar-group-right">
+            <p-button label="New" icon="pi pi-plus" (click)="addPost()"></p-button>
+        </div>
+    </p-toolbar>
+    <p-table #dt [columns]="cols" [value]="posts" [rows]="10" [paginator]="true">
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th *ngFor="let col of columns">
+                    {{col.header}}
+                </th>
+                <th>Actions</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <tr>
+                <td *ngFor="let col of columns">
+                    {{rowData[col.field]}}
+                </td>
+                <td>
+
+                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
+                        (click)="editPost(rowData)"></button>
+                    &nbsp;
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                        (click)="deletePost(rowData)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                In total there are {{posts ? posts.length : 0 }} posts.
+            </div>
+        </ng-template>
+    </p-table>
+</div>
+
+
+<!--Modals-->
+<p-dialog [(visible)]="displayModal" [modal]="true" [style]="{width: '50vw'}" [baseZIndex]="10000"
+    [draggable]="false" [resizable]="false">
+    <p-header *ngIf="mode=='add'">Add Post</p-header>
+    <p-header *ngIf="mode=='update'">Update Post</p-header>
+        
+        <form [formGroup]="postForm" class="row">
+            <div class="form-group col-12">
+                <h5>Title:</h5>
+                <input type="text" formControlName="title" class="form-control">
+            </div>
+            <div class="form-group col-12">
+                <h5>Author</h5>
+                <input type="text" formControlName="author" class="form-control">
+            </div>
+            <div class="form-group col-12">
+                <h5>Image URL:</h5>
+                <input type="text" formControlName="imageUrl" class="form-control">
+            </div>
+            <div class="form-group col-12">
+                <h5>Description</h5>
+                <angular-editor formControlName="content" [config]="editorConfig"></angular-editor>
+            </div>
+
+        </form>
+
+    <ng-template pTemplate="footer">
+        <p-button *ngIf="mode=='add'" icon="pi pi-check" (click)="confirmAddPost()" label="Add Post" class="p-button-text" [disabled]="!postForm.valid">
+        </p-button>
+        <p-button *ngIf="mode=='update'" icon="pi pi-check" (click)="confirmUpdatePost()" label="Update Post"
+            class="p-button-text" [disabled]="!postForm.valid"></p-button>
+        <p-button icon="pi pi-times" (click)="displayModal=false" label="Cancel"></p-button>
+    </ng-template>
+</p-dialog>
+
+
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
